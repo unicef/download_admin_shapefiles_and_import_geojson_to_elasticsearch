@@ -1,0 +1,22 @@
+{
+  "name": "airport2admin",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "azure-storage": "~1.2.0",
+    "extract-zip": "^1.5.0",
+    "line-reader": "^0.4.0",
+    "mkdirp": "^0.5.1",
+    "ogr2ogr": "^1.0.0",
+    "unzip": "^0.1.11"
+  },
+  "devDependencies": {
+    "eslint": "^3.4.0"
+  }
+}
