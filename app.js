@@ -3,11 +3,11 @@ var config = require('./config');
 var container_name = 'shapefiles';
 var fs = require('fs');
 var geo = require('./lib/geojsonize');
-var geojson_container = 'gadm';
+var geojson_container = 'gadm28';
 var request = require('request');
 var temp_storage = config.temp_storage;
 var zips_dir = temp_storage + 'zipfiles';
-var country_codes = require('./country_codes');
+var country_codes = require('./lib/country_codes');
 var async = require('async');
 var bluebird = require('bluebird');
 
