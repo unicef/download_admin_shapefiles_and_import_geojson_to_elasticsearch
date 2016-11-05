@@ -1,6 +1,4 @@
-geojson
-unzipped
-zipfiles
+data
 ./zipfiles
 .DS_Store
 # Logs
