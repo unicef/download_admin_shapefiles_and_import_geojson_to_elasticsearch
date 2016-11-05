@@ -3,8 +3,10 @@ var config = require('./config');
 var container_name = 'shapefiles';
 var fs = require('fs');
 var geo = require('./lib/geojsonize');
+var geojson_container = 'gadm';
 var request = require('request');
-var zips_dir = 'zipfiles';
+var temp_storage = config.temp_storage;
+var zips_dir = temp_storage + 'zipfiles';
 var country_codes = require('./country_codes');
 var async = require('async');
 var bluebird = require('bluebird');
@@ -14,7 +16,7 @@ var shapefiles_url = config.shapefile_url;
 async.waterfall([
   // Create container for geojson if it doesn't already exist
   function(callback) {
-    azure.create_storage_container('geojson')
+    azure.create_storage_container(geojson_container)
     .catch(function(err) {
       console.log(err);
     })
@@ -42,7 +44,7 @@ async.waterfall([
    */
 
   function(callback) {
-    azure.get_list_of_countries_to_fetch('geojson', country_codes).then(function(list) {
+    azure.get_list_of_countries_to_fetch(geojson_container, country_codes).then(function(list) {
       bluebird.map(list, function(e) {
         return download_shapefile_then_process(e);
       }, {concurrency: 1})
@@ -101,7 +103,8 @@ function download_shapefile_then_process(country_code){
 function process_zip(country_code){
   return new Promise(function(resolve){
     azure.upload_blob(container_name, country_code, zips_dir, 'zip')
-    .then(function(){
+    .catch(function(err) { console.log(err);})
+    .then(function() {
       geo.unzip_and_geojson(country_code, zips_dir).then(function(){
         resolve();
       });
