@@ -2,8 +2,10 @@ var elasticsearch = require('es');
 var _ = require('underscore');
 var es = elasticsearch();
 var fs = require('fs');
+var geojson_src = 'gadm2-8';
+var geojson_dir = './data/' + geojson_src;
 var jsonfile = require('jsonfile');
-var files = fs.readdirSync('./geojson');
+var files = fs.readdirSync(geojson_dir);
 var flag = 1;
 require('bluebird').map(files, function(file, i) {
   console.log(file, i)
@@ -12,7 +14,7 @@ require('bluebird').map(files, function(file, i) {
 
 function import_admins(file) {
   return new Promise(function(resolve, reject){
-    var json = jsonfile.readFileSync('./geojson/' + file);
+    var json = jsonfile.readFileSync(geojson_dir + '/' + file);
     var admin_level = file.match(/\d/)[0];
     bulk_es_insert(json.features, admin_level, file)
     .then(function() {resolve();});
@@ -29,7 +31,8 @@ function bulk_es_insert(records, admin_level, file) {
 }
 
 function import_admin(record, admin_level, file) {
-  admin_level.admin_level = admin_level;
+  record.properties.admin_level = admin_level;
+  record.properties.pub_src = geojson_src;
   return new Promise(function(resolve, reject) {
     var options = {
       _index: 'admins',
