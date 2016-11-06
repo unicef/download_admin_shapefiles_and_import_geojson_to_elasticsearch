@@ -10,6 +10,7 @@ var zips_dir = temp_storage + 'zipfiles';
 var country_codes = require('./lib/country_codes');
 var async = require('async');
 var bluebird = require('bluebird');
+var mkdirp = require('mkdirp');
 
 var shapefiles_url = config.shapefile_url;
 
@@ -36,6 +37,15 @@ async.waterfall([
     });
   },
 
+  function(callback) {
+    mkdirp(temp_storage + geojson_container, function (err) {
+      if (err) {
+        console.log(err);
+      }
+      callback();
+    });
+  },
+
   /**
    * Get list of countries you need shapefiles for, then fetch them.
    * TODO Destroy local file on upload complete
@@ -45,7 +55,7 @@ async.waterfall([
 
   function(callback) {
     azure.get_list_of_countries_to_fetch(geojson_container, country_codes).then(function(list) {
-      bluebird.map(list, function(e) {
+      bluebird.map(country_codes, function(e) {
         return download_shapefile_then_process(e);
       }, {concurrency: 1})
       .catch(function(err) {console.log(err); })
