@@ -54,8 +54,9 @@ async.waterfall([
    */
 
   function(callback) {
-    azure.get_list_of_countries_to_fetch(geojson_container, country_codes).then(function(list) {
-      bluebird.map(country_codes, function(e) {
+    azure.get_list_of_countries_to_fetch(geojson_container, country_codes)
+    .then(function(list) {
+      bluebird.map(list, function(e) {
         return download_shapefile_then_process(e);
       }, {concurrency: 1})
       .catch(function(err) {console.log(err); })
@@ -87,7 +88,8 @@ function download_shapefile_then_process(country_code){
     request({url: url, encoding: null}, function(err, resp, body) {
       if ( resp.statusCode != 200) {
         console.log('NOGO!', country_code);
-        resolve(); }
+        resolve();
+      }
 
       if (err) {
         return reject(err);
@@ -96,8 +98,10 @@ function download_shapefile_then_process(country_code){
       fs.writeFile(output, body, function(err) {
         if (err) throw err;
         console.log('File saved.');
-        process_zip(country_code).then(function(){
-          setTimeout(function(){console.log('wait...'); resolve();}, 2000);
+        process_zip(country_code).then(function() {
+          setTimeout(function() {
+            console.log('wait...'); resolve();
+          }, 2000);
         });
       });
     });
