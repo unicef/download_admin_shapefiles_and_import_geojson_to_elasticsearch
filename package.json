@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "argparser": "^0.2.2",
     "async": "^2.1.2",
     "azure-storage": "~1.2.0",
     "bluebird": "^3.4.6",
