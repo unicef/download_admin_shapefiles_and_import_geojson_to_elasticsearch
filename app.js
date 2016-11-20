@@ -1,3 +1,5 @@
+// Downloads shapefiles for all countries.
+// Generates geojson files
 var azure = require('./lib/azure');
 var config = require('./config');
 var container_name = 'shapefiles';
@@ -72,7 +74,6 @@ async.waterfall([
   }
   console.log('All done!');
   process.exit();
-
 });
 
 /**
