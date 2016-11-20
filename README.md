@@ -6,8 +6,6 @@
 - Uploads zipped shapefiles and geojson to azure blob storage containers
 
     node app.js
-    node import_admins_elasticsearch.js -d santiblanko
-    nohup node  import_admins_elasticsearch.js -d gadm2-8> nohup1.out 2>&1&
 
 ### Convert shapefile to geojson
 Requires the [GDAL - Geospatial Data Abstraction Library](http://www.gdal.org/)
@@ -30,4 +28,9 @@ curl -XPOST localhost:9200/admins -d '{
   }
 }'
 
- node  import_admins_elasticsearch.js -d gadm2-8
+
+### Import admins to ElasticSearch (For aggegating mobility by airport to admin)
+nohup node import_admins_elasticsearch.js -d gadm2-8> nohup1.out 2>&1&
+
+// To import a different admin set, add new directory with geojson in data directory then:
+node import_admins_elasticsearch.js -d <name of directory> ([santiblanko](https://github.com/santiblanko/colombia.geojson), for instance)
