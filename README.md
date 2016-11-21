@@ -1,5 +1,5 @@
 # Get shapefiles for all countries, store geojson in azure blob
-
+- This is a component of [MagicBox](https://github.com/unicef/magicbox/wiki)
 - Downloads [gadm]( http://gadm.org) zipped shapefiles for each country from [biogeo.ucdavis.edu](http://biogeo.ucdavis.edu)
 - Unzips them
 - Creates geojson files
