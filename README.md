@@ -10,11 +10,11 @@
 - Creates geojson files
 - Uploads zipped shapefiles and geojson to azure blob storage containers
 
-#### Run
+##### Run
     node app.js
 
 
-##### Import admins to ElasticSearch (For aggegating mobility by airport to admin)
+#### Import admins to ElasticSearch (For aggegating mobility by airport to admin)
 - ElasticSearch must be installed
 `curl -XDELETE localhost:9200/admins`
 `curl -XPOST localhost:9200/admins -d '{
@@ -29,7 +29,7 @@
   }
 }'
 `
-### Run
+##### Run
     nohup node import_admins_elasticsearch.js -d gadm2-8> nohup1.out 2>&1&
 
 - To import a different admin set, add new directory with geojson in data directory
