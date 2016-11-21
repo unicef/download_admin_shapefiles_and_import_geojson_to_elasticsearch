@@ -35,3 +35,21 @@
 - To import a different admin set, add new directory with geojson in data directory
     node import_admins_elasticsearch.js -d <name of directory>
 [santiblanko](https://github.com/santiblanko/colombia.geojson), for instance
+
+
+##### Admin meta info
+
+###### Unique ID:
+  - GADM 0 features: ID_0
+  - GADM 1 features: ID_0, ID_1.
+  - GADM 2, also has ID_0, ID_1, ID_2.
+  - For unique id : country_ISO-ID_0-ID_1-ID_2-admin_name.downcased
+
+###### Shapefile sources:
+- [GADM 2.8](http://biogeo.ucdavis.edu/data/gadm2.8/shp/)
+- Colombia: [github](http://github.com/santiblanko/colombia.geojson)
+  - ogr2ogr -f GeoJSON -t_srs crs:84 COL_2.geojson mpio.shp
+  - Decided to replace GADM Colombia admins 1&2 with depto.shp(1) and mpio.shp(2)
+    - ID_0: 53 (from GADM Colombia ID_0)
+    - ID_1: properties.DPTO
+    - ID_2: properties.WCOLGEN02_
