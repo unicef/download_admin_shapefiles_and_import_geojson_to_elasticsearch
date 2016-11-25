@@ -117,12 +117,12 @@ function download_shapefile_then_process(country_code){
  */
 function process_zip(country_code){
   return new Promise(function(resolve){
-    azure.upload_blob(container_name, country_code, zips_dir, 'zip')
-    .catch(function(err) { console.log(err);})
-    .then(function() {
+    // azure.upload_blob(container_name, country_code, zips_dir, 'zip')
+    // .catch(function(err) { console.log(err);})
+    // .then(function() {
       geo.unzip_and_geojson(country_code, zips_dir).then(function(){
         resolve();
       });
-    });
+    // });
   });
 }
