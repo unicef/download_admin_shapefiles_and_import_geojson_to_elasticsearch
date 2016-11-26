@@ -17,6 +17,7 @@
 #### Import admins to ElasticSearch (For aggegating mobility by airport to admin)
 - ElasticSearch must be installed
 `curl -XDELETE localhost:9200/admins`
+
 `curl -XPOST localhost:9200/admins -d '{
   mappings: {
     admin: {
