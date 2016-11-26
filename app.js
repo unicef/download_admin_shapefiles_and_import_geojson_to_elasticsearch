@@ -56,8 +56,10 @@ async.waterfall([
    */
 
   function(callback) {
-    azure.get_list_of_countries_to_fetch(geojson_container, country_codes)
-    .then(function(list) {
+    // Uncomment to compare with what's in Azure storage
+    // azure.get_list_of_countries_to_fetch(geojson_container, country_codes)
+    // .then(function(list) {
+      var list = country_codes;
       bluebird.map(list, function(e) {
         return download_shapefile_then_process(e);
       }, {concurrency: 1})
@@ -65,7 +67,7 @@ async.waterfall([
       .then(function(){
         callback();
       });
-    });
+    // });
   },
 
 ], function(err) {
