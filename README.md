@@ -24,6 +24,9 @@
       "properties": {
         "geometry": {
           "type": "geo_shape"
+        },
+        "ISO": {
+          "type": "string"
         }
       }
     }
