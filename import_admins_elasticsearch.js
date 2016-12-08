@@ -40,12 +40,13 @@ var isos = Object.keys(
   {})
 );
 
-var needed_zeros = zero_only_if_no_1_2(isos);
+var needed_zeros = certain_admin_if_no_other(isos, [1, 2]);
+var needed_ones = certain_admin_if_no_other(isos, [2]);
 
 var wanted_files = files.filter(function(file) {
   var iso = file.match(/^[A-Z]{3}/)[0];
   var level = file.match(/\d/)[0];
-  return (level != 0 || needed_zeros[iso]);
+  return (level == 2 || needed_zeros[iso] || needed_ones[iso]);
 });
 
 azure.create_storage_container(geojson_src)
@@ -82,22 +83,6 @@ function bulk_es_insert(records, admin_level, country_iso) {
   });
 }
 
-function zero_only_if_no_1_2(isos) {
-  var solo_zero_admin_isos = {};
-  isos.forEach(function(iso) {
-    var good = 1;
-    ['_1', '_2'].forEach(function(pre) {
-      if (fileExists(geojson_dir + '/' + iso + pre + '.geojson')) {
-        good = 0;
-      }
-    });
-    if (good) {
-      solo_zero_admin_isos[iso] = 1;
-    }
-  });
-  return solo_zero_admin_isos;
-}
-
 function import_admin(record, admin_level) {
   return new Promise(function(resolve, reject) {
     var options = {
@@ -118,4 +103,20 @@ function import_admin(record, admin_level) {
       resolve();
     }
   });
+}
+
+function certain_admin_if_no_other(isos, ary_num) {
+  var solo_certain_admin_isos = {};
+  isos.forEach(function(iso) {
+    var good = 1;
+    ary_num.forEach(function(pre) {
+      if (fileExists(geojson_dir + '/' + iso + '_' + pre + '.geojson')) {
+        good = 0;
+      }
+    });
+    if (good) {
+      solo_certain_admin_isos[iso] = 1;
+    }
+  });
+  return solo_certain_admin_isos;
 }
