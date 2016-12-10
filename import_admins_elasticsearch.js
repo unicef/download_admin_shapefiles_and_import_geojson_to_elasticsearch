@@ -11,13 +11,6 @@ var flag = 1;
 var bluebird = require('bluebird');
 var fileExists = require('file-exists');
 
-var ON_DEATH = require('death'); //this is intentionally ugly
-
-ON_DEATH(function(signal, err) {
-  console.log(signal);
-  console.log(err);
-});
-
 var parser = new ArgumentParser({
   version: '0.0.1',
   addHelp: true,
@@ -41,7 +34,7 @@ var isos = Object.keys(
 );
 
 var needed_zeros = certain_admin_if_no_other(isos, [1, 2]);
-var needed_ones = certain_admin_if_no_other(isos, [2]);
+var needed_ones = certain_admin_if_no_other(isos, []);
 
 var wanted_files = files.filter(function(file) {
   var iso = file.match(/^[A-Z]{3}/)[0];
@@ -50,7 +43,7 @@ var wanted_files = files.filter(function(file) {
 });
 
 azure.create_storage_container(geojson_src)
-.catch(function(err) {console.log(err);})
+.catch(console.log)
 .then(function(){
   bluebird.map(wanted_files, function(file, i) {
     console.log(file, i);
@@ -74,12 +67,13 @@ function import_admins(file) {
 function bulk_es_insert(records, admin_level, country_iso) {
   return new Promise(function(resolve, reject) {
     require('bluebird').map(records, function(record, i) {
-      record = normalize_admin.add_admin_indexes(geojson_src, record, admin_level, country_iso);
+      record = normalize_admin.add_admin_id(geojson_src, record, admin_level, country_iso);
+
       console.log(i, record.properties.ISO, admin_level);
       return import_admin(record, admin_level);
     }, {concurrency: 1})
-    .catch(function(err) {return reject(err);})
-    .then(function() {resolve();});
+    .catch(reject)
+    .then(resolve);
   });
 }
 

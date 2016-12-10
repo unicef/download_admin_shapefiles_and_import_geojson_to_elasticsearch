@@ -16,10 +16,12 @@
     "es": "^0.5.2",
     "extract-zip": "^1.5.0",
     "file-exists": "^2.0.0",
+    "geojson-area": "^0.2.1",
     "jsonfile": "^2.4.0",
     "line-reader": "^0.4.0",
     "mkdirp": "^0.5.1",
     "ogr2ogr": "^1.0.0",
+    "turf": "^3.0.14",
     "underscore": "^1.8.3",
     "unzip": "^0.1.11"
   },
