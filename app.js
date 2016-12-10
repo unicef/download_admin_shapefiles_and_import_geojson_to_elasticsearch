@@ -69,8 +69,8 @@ async.waterfall([
       .then(function(){
         callback();
       });
-    // });
-  },
+    });
+  }
 
 ], function(err) {
   if (err) {
