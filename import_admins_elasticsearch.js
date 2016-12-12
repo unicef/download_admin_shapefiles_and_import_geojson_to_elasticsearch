@@ -1,6 +1,7 @@
 // node import_admins_elasticsearch.js -d santiblanko
 // nohup node  import_admins_elasticsearch.js -d gadm2-8> nohup1.out 2>&1&
 var azure = require('./lib/azure');
+var config = require('./config');
 var elasticsearch = require('es');
 var ArgumentParser = require('argparse').ArgumentParser;
 var normalize_admin = require('./lib/add_admin_indexes');
@@ -24,24 +25,20 @@ parser.addArgument(
 
 var args = parser.parseArgs();
 var geojson_src = args.geojson_dir;
-var geojson_dir = './data/' + geojson_src;
+var geojson_dir = config.temp_storage + geojson_src;
 var files = fs.readdirSync(geojson_dir);
-
 var isos = Object.keys(
   files.reduce(
   function(h,e) { var iso = e.match(/^[A-Z]{3}/)[0]; h[iso] = 1; return h;},
   {})
 );
-
 var needed_zeros = certain_admin_if_no_other(isos, [1, 2]);
-var needed_ones = certain_admin_if_no_other(isos, []);
-
+//var needed_ones = certain_admin_if_no_other(isos, [0, 2]);
 var wanted_files = files.filter(function(file) {
   var iso = file.match(/^[A-Z]{3}/)[0];
   var level = file.match(/\d/)[0];
-  return (level == 2 || needed_zeros[iso] || needed_ones[iso]);
+  return (level == 2 || level == 1 || needed_zeros[iso]);
 });
-
 azure.create_storage_container(geojson_src)
 .catch(console.log)
 .then(function(){
@@ -67,9 +64,14 @@ function import_admins(file) {
 function bulk_es_insert(records, admin_level, country_iso) {
   return new Promise(function(resolve, reject) {
     require('bluebird').map(records, function(record, i) {
-      record = normalize_admin.add_admin_id(geojson_src, record, admin_level, country_iso);
-
       console.log(i, record.properties.ISO, admin_level);
+      if (i === 10 && record.properties.ISO.match(/CHL/) && admin_level == 1) { 
+        flag = 1;
+      };
+      if (flag === 1) {
+       record = normalize_admin.add_admin_id(geojson_src, record, admin_level, country_iso, geojson_src);
+       console.log(record.properties.timezone, record.properties.admin_id);	
+      }
       return import_admin(record, admin_level);
     }, {concurrency: 1})
     .catch(reject)
@@ -90,7 +92,7 @@ function import_admin(record, admin_level) {
           console.log(err);
           // return reject(err);
         }
-        setTimeout(function(){resolve();}, 300);
+        setTimeout(function(){resolve();}, 100);
       });
 
     } else {
