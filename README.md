@@ -5,10 +5,15 @@
     - [Ubuntu](http://www.sarasafavi.com/installing-gdalogr-on-ubuntu.html)
 
 ### What it does
+
+##### app.js
+
 - Downloads [gadm]( http://gadm.org) zipped shapefiles for each country from [biogeo.ucdavis.edu](http://biogeo.ucdavis.edu)
 - Unzips them
 - Creates geojson files
-- Uploads zipped shapefiles and geojson to azure blob storage containers
+##### import_admins_elasticsearch.js
+- Imports admins to ElasticSearch
+
 
 ##### Run
     node app.js
@@ -43,11 +48,12 @@
 }'
 `
 #### Trouble with Canada and Australia
-rm  ./data/gadm2-8/CAN*
-ogr2ogr -f GeoJSON data/gadm2-8/CAN_2.geojson data/unzipped/CAN/CAN_adm2.shp
-ogr2ogr -f GeoJSON data/gadm2-8/CAN_1.geojson data/unzipped/CAN/CAN_adm1.shp
-rm  ./data/gadm2-8/AUS_2.geojson
-ogr2ogr -f GeoJSON data/gadm2-8/AUS_2.geojson data/unzipped/AUS/AUS_adm2.shp
+`rm  ./data/gadm2-8/CAN*`
+`ogr2ogr -f GeoJSON data/gadm2-8/CAN_2.geojson data/unzipped/CAN/CAN_adm2.shp`
+`ogr2ogr -f GeoJSON data/gadm2-8/CAN_1.geojson data/unzipped/CAN/CAN_adm1.shp`
+`rm  ./data/gadm2-8/AUS_2.geojson`
+`ogr2ogr -f GeoJSON data/gadm2-8/AUS_2.geojson data/unzipped/AUS/AUS_adm2.shp`
+
 ##### Run
     nohup node import_admins_elasticsearch.js -d gadm2-8> nohup1.out 2>&1&
 
@@ -59,10 +65,10 @@ ogr2ogr -f GeoJSON data/gadm2-8/AUS_2.geojson data/unzipped/AUS/AUS_adm2.shp
 ##### Admin meta info
 
 ###### Unique ID:
-  - GADM 0 features: ID_0
-  - GADM 1 features: ID_0, ID_1.
-  - GADM 2, also has ID_0, ID_1, ID_2.
-  - For unique id : country_ISO-ID_0-ID_1-ID_2-admin_name.downcased
+    GADM 0 features: ID_0
+    GADM 1 features: ID_0, ID_1.
+    GADM 2, also has ID_0, ID_1, ID_2.
+    For unique id : country_ISO-ID_0-ID_1-ID_2-admin_name.downcased
 
 ###### Shapefile sources:
 - [GADM 2.8](http://biogeo.ucdavis.edu/data/gadm2.8/shp/)
