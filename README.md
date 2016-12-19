@@ -11,6 +11,7 @@
 - Downloads [gadm](http://gadm.org) series 2.8 zipped shapefiles for each country.
 - Unzips them
 - Creates geojson files
+
 ##### import_admins_elasticsearch.js
 - Imports admins to ElasticSearch
 
