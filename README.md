@@ -8,7 +8,7 @@
 
 ##### app.js
 
-- Downloads [gadm]( http://gadm.org) zipped shapefiles for each country from [biogeo.ucdavis.edu](http://biogeo.ucdavis.edu)
+- Downloads [gadm](http://gadm.org) series 2.8 zipped shapefiles for each country from [gadm.org](http://gadm.org)
 - Unzips them
 - Creates geojson files
 ##### import_admins_elasticsearch.js
