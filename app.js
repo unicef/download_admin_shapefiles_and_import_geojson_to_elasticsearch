@@ -39,6 +39,17 @@ async.waterfall([
     });
   },
 
+  // Create container for shapefiles if it doesn't already exist.
+  function(callback) {
+    azure.create_storage_container('unzipped')
+    .catch(function(err) {
+      console.log(err);
+    })
+    .then(function() {
+      callback();
+    });
+  },
+
   function(callback) {
     mkdirp(temp_storage + geojson_container, function (err) {
       if (err) {
@@ -56,19 +67,16 @@ async.waterfall([
    */
 
   function(callback) {
-    azure.get_list_of_countries_to_fetch(geojson_container, country_codes)
-    .then(function(list) {
-// list = ['CAN', 'AUS'];
-    // Uncomment to compare with what's in Azure storage
-    // azure.get_list_of_countries_to_fetch(geojson_container, country_codes)
-    // .then(function(list) {
-      bluebird.map(list, function(e) {
-        return download_shapefile_then_process(e);
-      }, {concurrency: 1})
-      .catch(function(err) {console.log(err); })
-      .then(function(){
-        callback();
-      });
+  // list = ['CAN', 'AUS'];
+  // Uncomment to compare with what's in Azure storage
+  // azure.get_list_of_countries_to_fetch(geojson_container, country_codes)
+  // .then(function(list) {
+    bluebird.map(country_codes, function(e) {
+      return download_shapefile_then_process(e);
+    }, {concurrency: 1})
+    .catch(function(err) {console.log(err); })
+    .then(function(){
+      callback();
     });
   }
 
