@@ -1,4 +1,4 @@
-# Get shapefiles for all countries, store geojson in azure blob
+# Get shapefiles for all countries, store geojson in ElasticSearch
 - This is a component of [MagicBox](https://github.com/unicef/magicbox/wiki)
 - Requires the [GDAL - Geospatial Data Abstraction Library](http://www.gdal.org/) to convert shapefile to geojson
     - (On Mac OSX: brew install gdal)
