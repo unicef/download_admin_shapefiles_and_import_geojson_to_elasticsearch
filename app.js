@@ -41,7 +41,7 @@ async.waterfall([
 
   // Create container for shapefiles if it doesn't already exist.
   function(callback) {
-    azure.create_storage_container('unzipped')
+    azure.create_storage_container('zipfiles')
     .catch(function(err) {
       console.log(err);
     })
