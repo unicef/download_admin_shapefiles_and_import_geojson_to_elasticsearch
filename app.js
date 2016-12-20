@@ -39,19 +39,26 @@ async.waterfall([
     });
   },
 
-  // Create container for shapefiles if it doesn't already exist.
   function(callback) {
-    azure.create_storage_container('zipfiles')
-    .catch(function(err) {
-      console.log(err);
-    })
-    .then(function() {
+    mkdirp(temp_storage + geojson_container, function (err) {
+      if (err) {
+        console.log(err);
+      }
       callback();
     });
   },
 
   function(callback) {
-    mkdirp(temp_storage + geojson_container, function (err) {
+    mkdirp(temp_storage + 'zipfiles', function (err) {
+      if (err) {
+        console.log(err);
+      }
+      callback();
+    });
+  },
+
+  function(callback) {
+    mkdirp(temp_storage + 'unzipped', function (err) {
       if (err) {
         console.log(err);
       }
