@@ -8,7 +8,7 @@ var normalize_admin = require('./lib/add_admin_indexes');
 var es = elasticsearch();
 var fs = require('fs');
 var jsonfile = require('jsonfile');
-var flag = 1;
+var flag = 0;
 var bluebird = require('bluebird');
 var fileExists = require('file-exists');
 
@@ -39,6 +39,7 @@ var wanted_files = files.filter(function(file) {
   var level = file.match(/\d/)[0];
   return (level == 2 || level == 1 || needed_zeros[iso]);
 });
+
 azure.create_storage_container(geojson_src)
 .catch(console.log)
 .then(function(){
@@ -63,17 +64,17 @@ function import_admins(file) {
 
 function bulk_es_insert(records, admin_level, country_iso) {
   return new Promise(function(resolve, reject) {
-    require('bluebird').map(records, function(record, i) {
-      console.log(i, record.properties.ISO, admin_level);
-      if (i === 10 && record.properties.ISO.match(/CHL/) && admin_level == 1) { 
-        flag = 1;
-      };
+    bluebird.map(records.reverse(), function(record, i) {
+      console.log(i, admin_level);
+      // if (i === 10 && record.properties.ISO.match(/CHL/) && admin_level == 1) {
+      //   flag = 1;
+      // };
       if (flag === 1) {
        record = normalize_admin.add_admin_id(geojson_src, record, admin_level, country_iso, geojson_src);
-       console.log(record.properties.timezone, record.properties.admin_id);	
+       console.log(record.properties.timezone, record.properties.admin_id);
       }
       return import_admin(record, admin_level);
-    }, {concurrency: 1})
+    }, {concurrency: 100})
     .catch(reject)
     .then(resolve);
   });
@@ -92,7 +93,7 @@ function import_admin(record, admin_level) {
           console.log(err);
           // return reject(err);
         }
-        setTimeout(function(){resolve();}, 100);
+        setTimeout(function(){resolve();}, );
       });
 
     } else {
@@ -106,7 +107,7 @@ function certain_admin_if_no_other(isos, ary_num) {
   isos.forEach(function(iso) {
     var good = 1;
     ary_num.forEach(function(pre) {
-      if (fileExists(geojson_dir + '/' + iso + '_' + pre + '.geojson')) {
+      if (fileExists(geojson_dir + '/' + iso + '_' + pre + '.json')) {
         good = 0;
       }
     });
