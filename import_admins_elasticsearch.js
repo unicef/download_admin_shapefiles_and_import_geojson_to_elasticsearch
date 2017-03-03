@@ -93,7 +93,7 @@ function import_admin(record, admin_level) {
           console.log(err);
           // return reject(err);
         }
-        setTimeout(function(){resolve();}, );
+        Timeout(function(){resolve();}, 200);
       });
 
     } else {
