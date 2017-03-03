@@ -2,7 +2,7 @@
 // Generates geojson files
 var azure = require('./lib/azure');
 var config = require('./config');
-var container_name = 'shapefiles';
+// var container_name = 'shapefiles';
 var fs = require('fs');
 var geo = require('./lib/geojsonize');
 var geojson_container = config.geojson_dir;
@@ -29,24 +29,24 @@ async.waterfall([
   },
 
   // Create container for shapefiles if it doesn't already exist.
-  function(callback) {
-    azure.create_storage_container('shapefiles')
-    .catch(function(err) {
-      console.log(err);
-    })
-    .then(function() {
-      callback();
-    });
-  },
-
-  function(callback) {
-    mkdirp(temp_storage + geojson_container, function (err) {
-      if (err) {
-        console.log(err);
-      }
-      callback();
-    });
-  },
+  // function(callback) {
+  //   azure.create_storage_container('shapefiles')
+  //   .catch(function(err) {
+  //     console.log(err);
+  //   })
+  //   .then(function() {
+  //     callback();
+  //   });
+  // },
+  //
+  // function(callback) {
+  //   mkdirp(temp_storage + geojson_container, function (err) {
+  //     if (err) {
+  //       console.log(err);
+  //     }
+  //     callback();
+  //   });
+  // },
 
   function(callback) {
     mkdirp(temp_storage + 'zipfiles', function (err) {
