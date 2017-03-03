@@ -17,18 +17,18 @@ var mkdirp = require('mkdirp');
 var shapefiles_url = config.shapefile_url;
 
 async.waterfall([
-  // Create container for geojson if it doesn't already exist
-  function(callback) {
-    azure.create_storage_container(geojson_container)
-    .catch(function(err) {
-      console.log(err);
-    })
-    .then(function(){
-      callback();
-    });
-  },
-
-  // Create container for shapefiles if it doesn't already exist.
+  // // Create container for geojson if it doesn't already exist
+  // function(callback) {
+  //   azure.create_storage_container(geojson_container)
+  //   .catch(function(err) {
+  //     console.log(err);
+  //   })
+  //   .then(function(){
+  //     callback();
+  //   });
+  // },
+  //
+  // // Create container for shapefiles if it doesn't already exist.
   // function(callback) {
   //   azure.create_storage_container('shapefiles')
   //   .catch(function(err) {
@@ -38,15 +38,15 @@ async.waterfall([
   //     callback();
   //   });
   // },
-  //
-  // function(callback) {
-  //   mkdirp(temp_storage + geojson_container, function (err) {
-  //     if (err) {
-  //       console.log(err);
-  //     }
-  //     callback();
-  //   });
-  // },
+
+  function(callback) {
+    mkdirp(temp_storage + geojson_container, function (err) {
+      if (err) {
+        console.log(err);
+      }
+      callback();
+    });
+  },
 
   function(callback) {
     mkdirp(temp_storage + 'zipfiles', function (err) {
