@@ -2,7 +2,8 @@
 // Generates geojson files
 var azure = require('./lib/azure');
 var config = require('./config');
-// var container_name = 'shapefiles';
+var ArgumentParser = require('argparse').ArgumentParser;
+var container_name = 'shapefiles';
 var fs = require('fs');
 var geo = require('./lib/geojsonize');
 var geojson_container = config.geojson_dir;
@@ -14,30 +15,43 @@ var async = require('async');
 var bluebird = require('bluebird');
 var mkdirp = require('mkdirp');
 
+var parser = new ArgumentParser({
+  version: '0.0.1',
+  addHelp: true,
+  description: 'Aggregate a csv of airport by admin 1 and 2'
+});
+
+parser.addArgument(
+  ['-s', '--save_to_cloud'],
+  {help: 'Boolean: save to cloud'}
+);
+var args = parser.parseArgs();
+var save_to_azure = args.save_to_cloud;
+
 var shapefiles_url = config.shapefile_url;
 
 async.waterfall([
-  // // Create container for geojson if it doesn't already exist
-  // function(callback) {
-  //   azure.create_storage_container(geojson_container)
-  //   .catch(function(err) {
-  //     console.log(err);
-  //   })
-  //   .then(function(){
-  //     callback();
-  //   });
-  // },
-  //
-  // // Create container for shapefiles if it doesn't already exist.
-  // function(callback) {
-  //   azure.create_storage_container('shapefiles')
-  //   .catch(function(err) {
-  //     console.log(err);
-  //   })
-  //   .then(function() {
-  //     callback();
-  //   });
-  // },
+  // Create container for geojson if it doesn't already exist
+  function(callback) {
+    if (save_to_azure) {
+      azure.create_storage_container(geojson_container)
+      .catch(console.log)
+      .then(callback);
+    } else {
+      callback();
+    }
+  },
+
+  // Create container for shapefiles if it doesn't already exist.
+  function(callback) {
+    if (save_to_azure) {
+      azure.create_storage_container('shapefiles')
+      .catch(console.log)
+      .then(callback);
+    } else {
+      callback();
+    }
+  },
 
   function(callback) {
     mkdirp(temp_storage + geojson_container, function (err) {
@@ -136,12 +150,27 @@ function download_shapefile_then_process(country_code){
  */
 function process_zip(country_code){
   return new Promise(function(resolve){
-    // azure.upload_blob(container_name, country_code, zips_dir, 'zip')
-    // .catch(function(err) { console.log(err);})
-    // .then(function() {
-      geo.unzip_and_geojson(country_code, zips_dir).then(function(){
-        resolve();
-      });
-    // });
+    async.waterfall([
+      function(callback) {
+        if (save_to_azure) {
+          azure.upload_blob(container_name, country_code, zips_dir, 'zip')
+          .catch(console.log)
+          .then(callback);
+        } else {
+          callback();
+        }
+      },
+
+      function(callback) {
+        geo.unzip_and_geojson(country_code, zips_dir)
+        .then(callback);
+      }
+    ], function(err) {
+      if (err) {
+        console.log(err);
+      }
+      console.log('All done!');
+      resolve();
+    });
   });
 }
