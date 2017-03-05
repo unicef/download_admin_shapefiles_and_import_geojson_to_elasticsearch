@@ -92,13 +92,12 @@ async.waterfall([
   // Uncomment to compare with what's in Azure storage
   // azure.get_list_of_countries_to_fetch(geojson_container, country_codes)
   // .then(function(list) {
-    bluebird.map(country_codes, function(e) {
+    bluebird.each(country_codes, function(e, i) {
+      console.log('Processing', e, i);
       return download_shapefile_then_process(e);
     }, {concurrency: 1})
-    .catch(function(err) {console.log(err); })
-    .then(function(){
-      callback();
-    });
+    .catch(console.log)
+    .then(callback);
   }
 
 ], function(err) {
@@ -134,7 +133,8 @@ function download_shapefile_then_process(country_code){
         console.log('File saved.');
         process_zip(country_code).then(function() {
           setTimeout(function() {
-            console.log('wait...'); resolve();
+            console.log('wait...');
+            resolve();
           }, 2000);
         });
       });
