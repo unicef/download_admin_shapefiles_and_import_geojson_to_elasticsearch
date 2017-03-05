@@ -121,13 +121,13 @@ function download_shapefile_then_process(country_code){
     request({url: url, encoding: null}, function(err, resp, body) {
       if ( resp.statusCode != 200) {
         console.log('NOGO!', country_code);
-        resolve();
+        return resolve();
       }
 
       if (err) {
         return reject(err);
       }
-
+      console.log('About to write to file')
       fs.writeFile(output, body, function(err) {
         if (err) throw err;
         console.log('File saved.');
