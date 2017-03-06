@@ -50,9 +50,13 @@
 `
 #### Trouble with Canada and Australia
 `rm  ./data/gadm2-8/CAN*`
+
 `ogr2ogr -f GeoJSON data/gadm2-8/CAN_2.json data/unzipped/CAN/CAN_adm2.shp`
+
 `ogr2ogr -f GeoJSON data/gadm2-8/CAN_1.json data/unzipped/CAN/CAN_adm1.shp`
-`rm  ./data/gadm2-8/AUS_2.geojson`
+
+`rm  ./data/gadm2-8/AUS_2.json`
+
 `ogr2ogr -f GeoJSON data/gadm2-8/AUS_2.json data/unzipped/AUS/AUS_adm2.shp`
 
 ##### Run
