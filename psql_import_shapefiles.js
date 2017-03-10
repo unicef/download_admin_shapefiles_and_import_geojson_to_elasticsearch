@@ -60,6 +60,7 @@ var wanted_files = files.reduce(function(h, file) {
 function import_admins(country, admin_level) {
   return new Promise((resolve, reject) => {
     var command = 'bash util/create_db.sh ' + country.toLowerCase() + ' ' + admin_level + ' ' + geojson_src;
+    //var command = 'bash util/destroy_db.sh ' + country.toLowerCase() + ' ' + admin_level + ' ' + geojson_src;
     console.log(command)
     // resolve();
     exec(command, (err, stdout, stderr) => {
