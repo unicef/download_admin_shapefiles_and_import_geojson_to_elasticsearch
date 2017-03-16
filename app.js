@@ -26,14 +26,14 @@ parser.addArgument(
   {help: 'Boolean: save to cloud'}
 );
 var args = parser.parseArgs();
-var save_to_azure = args.save_to_cloud;
+var save_to_cloud = args.save_to_cloud;
 
 var shapefiles_url = config.shapefile_url;
 
 async.waterfall([
   // Create container for geojson if it doesn't already exist
   function(callback) {
-    if (save_to_azure) {
+    if (save_to_cloud) {
       azure.create_storage_container(geojson_container)
       .catch(console.log)
       .then(()=> {callback();});
@@ -45,7 +45,7 @@ async.waterfall([
   // Create container for shapefiles if it doesn't already exist.
   function(callback) {
 
-    if (save_to_azure) {
+    if (save_to_cloud) {
       azure.create_storage_container('shapefiles')
       .catch(console.log)
       .then(() => {callback();});
@@ -55,7 +55,6 @@ async.waterfall([
   },
 
   function(callback) {
-    console.log('222')
     mkdirp(temp_storage + geojson_container, function (err) {
       if (err) {
         console.log(err);
@@ -103,7 +102,6 @@ async.waterfall([
   }
 
 ], function(err) {
-  console.log("***", !!err)
   if (err) {
     console.log(err);
   }
@@ -155,7 +153,7 @@ function process_zip(country_code){
   return new Promise(function(resolve){
     async.waterfall([
       function(callback) {
-        if (save_to_azure) {
+        if (save_to_cloud) {
           azure.upload_blob(container_name, country_code, zips_dir, 'zip')
           .catch(console.log)
           .then(() => {callback();});
@@ -165,7 +163,7 @@ function process_zip(country_code){
       },
 
       function(callback) {
-        geo.unzip_and_geojson(country_code, zips_dir)
+        geo.unzip_and_geojson(country_code, zips_dir, save_to_cloud)
         .then(callback);
       }
     ], function(err) {
