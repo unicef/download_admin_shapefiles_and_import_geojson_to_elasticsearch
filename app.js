@@ -36,7 +36,7 @@ async.waterfall([
     if (save_to_azure) {
       azure.create_storage_container(geojson_container)
       .catch(console.log)
-      .then(callback);
+      .then(()=> {callback();});
     } else {
       callback();
     }
@@ -44,16 +44,18 @@ async.waterfall([
 
   // Create container for shapefiles if it doesn't already exist.
   function(callback) {
+
     if (save_to_azure) {
       azure.create_storage_container('shapefiles')
       .catch(console.log)
-      .then(callback);
+      .then(() => {callback();});
     } else {
       callback();
     }
   },
 
   function(callback) {
+    console.log('222')
     mkdirp(temp_storage + geojson_container, function (err) {
       if (err) {
         console.log(err);
@@ -101,6 +103,7 @@ async.waterfall([
   }
 
 ], function(err) {
+  console.log("***", !!err)
   if (err) {
     console.log(err);
   }
@@ -155,7 +158,7 @@ function process_zip(country_code){
         if (save_to_azure) {
           azure.upload_blob(container_name, country_code, zips_dir, 'zip')
           .catch(console.log)
-          .then(callback);
+          .then(() => {callback();});
         } else {
           callback();
         }
