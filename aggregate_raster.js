@@ -7,7 +7,7 @@ var exec = require('child_process').exec;
 
 var command = "psql -l -t | cut -d'|' -f1 ";
 // var command = "psql -lqt  | grep _";
-var config  require('config').pg_config;
+var config = require('./config').pg_config;
 function country_db_names() {
   return new Promise((resolve, reject) => {
     exec(command, (err, stdout, stderr) => {
@@ -40,7 +40,7 @@ function process_country(country) {
   return new Promise((resolve, reject) => {
     async.waterfall([
       function(callback) {
-        var command = 'bash fetch_and_process_raster.sh ' + country;
+        var command = 'bash ./util/fetch_and_process_raster.sh ' + country;
         exec(command,{maxBuffer: 4096 * 2500}, (err, stdout, stderr) => {
           console.log(stdout, '|', stderr);
           var tif_file = tiff_file_name(stdout);
@@ -141,7 +141,7 @@ function list_connections() {
 }
 
 function drop_raster_table(country, kind) {
-  var command = 'bash drop_raster_table.sh ' + country + ' ' + kind
+  var command = 'bash ./util/drop_raster_table.sh ' + country + ' ' + kind
   return new Promise((resolve, reject) => {
     exec(command, (err, stdout, stderr) => {
       console.log(stdout)
