@@ -1,5 +1,6 @@
 var async = require('async');
 var bluebird = require('bluebird');
+var geojsonArea = require('@mapbox/geojson-area');
 var pg = require('pg');
 var fs = require('fs');
 
@@ -21,7 +22,7 @@ function country_db_names() {
   });
 }
 country_db_names().then(countries => {
-  bluebird.each(countries, country => {
+  bluebird.each(countries.slice(108), country => {
     console.log(country, '!!!');
     return process_country(country).then(() => {
       // Drop raster from table if exists
@@ -96,7 +97,7 @@ function scan_raster(country, admin_table, connectionString, tif_file) {
     var results = [];
     config.database = country;
     pg.connect(config, (err, client, done) => {
-      var st = 'SELECT gid, ';
+      var st = 'SELECT gid, ST_Area(geom::geography)/1609.34^2 AS kilometers, ';
       for(var i = 0; i <= admin_level; i++) {
         st += '"' + admin_table.table_name + '"' + '.ID_' + i + ', ';
       }
@@ -115,9 +116,14 @@ function scan_raster(country, admin_table, connectionString, tif_file) {
       // After all data is returned, close connection and return results
       query.on('end', () => {
         // content = content + results.map(r => {return [file, r.sum || 0, r.dpto, r.wcolgen02_, 'col_0_' + r.dpto + '_' + r.wcolgen02_ + '_santiblanko'].join(" ") }).join("\n")
+        // Get population for whole country to store in file name
+        var pop_sum = parseInt(results.reduce((s, r) => { return s + r.sum }, 0)); 
+        var kilo_sum = parseInt(results.reduce((s, r) => { return s + r.kilometers}, 0));
         fs.writeFile('./data/rasters/processed/' +
         country + '^' + admin_table.table_name +
         '^' + tif_file +
+        '^' + pop_sum +
+        '^' + kilo_sum +
         '.json',
         JSON.stringify(results), (err) => {
           if (err) console.log(err)
