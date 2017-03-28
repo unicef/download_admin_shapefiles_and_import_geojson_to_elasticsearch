@@ -1,9 +1,15 @@
 upper=`echo "$1" | tr /a-z/ /A-Z/`'-POP'
+if [ $1 == "bra" ]; then
+  upper="Americas-POP-1KM"
+fi
+if [[ "$1" =~ ^(irn|jor|tur|tkm)$ ]]; then
+  upper="Asia-POP-1KM"
+fi
 
 if [ ! -f data/rasters/$1.zip ]; then
 	wget "http://www.worldpop.org.uk/data/hdx/?dataset=$upper" -O data/rasters/$1.zip
-  mkdir $1
 	unzip data/rasters/$1.zip -d data/rasters/$1
+        ls data/rasters/$1
 fi
 
 # Drop the table if it exists
