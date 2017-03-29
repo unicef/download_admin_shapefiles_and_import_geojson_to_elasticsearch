@@ -54,8 +54,8 @@ function topojsonize(feature_collection, f) {
       'retain-proportion': 0.4
     });
 
-    jsonfile.writeFile(topo_source_dir + '/' + f, c, (err) => {
-      console.log(err)
+    jsonfile.writeFile(topo_source_dir + '/' + f, c, (err, data) => {
+      console.log(err, f)
       resolve();
     });
   });
