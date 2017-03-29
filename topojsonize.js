@@ -2,6 +2,8 @@ var fs = require('fs');
 var jsonfile = require('jsonfile');
 var topojson = require('topojson');
 var ArgumentParser = require('argparse').ArgumentParser;
+var bluebird = require('bluebird');
+var async = require('async');
 
 var parser = new ArgumentParser({
   version: '0.0.1',
@@ -31,12 +33,32 @@ if (!fs.existsSync(topo_data_dir)){
 if (!fs.existsSync(topo_source_dir)){
   fs.mkdirSync(topo_source_dir);
 }
-fs.readdirSync(data_dir + source).forEach(f => {
-  read_jsonfile(data_dir + source + '/' + f)
-  .then(geojson => {
-    topojsonize(geojson, f);
-  })
+var geo_files = fs.readdirSync(data_dir + source);
+
+bluebird.each(geo_files, f => {
+  return process_file(f);
+}, {concurrency: 1}).then(() => {
+  console.log('done!');
 });
+
+function process_file(f) {
+  return new Promise((resolve, reject) => {
+    async.waterfall([
+      function(callback) {
+        read_jsonfile(data_dir + source + '/' + f)
+        .then(geojson => {
+          callback(null, geojson);
+        });
+      },
+      function(geojson, callback) {
+        topojsonize(geojson, f)
+        .then(callback);
+      }
+    ], function (err, result) {
+      resolve();
+    });
+  })
+}
 
 function topojsonize(feature_collection, f) {
   return new Promise(function(resolve, reject) {
@@ -55,7 +77,7 @@ function topojsonize(feature_collection, f) {
     });
 
     jsonfile.writeFile(topo_source_dir + '/' + f, c, (err, data) => {
-      console.log(err, f)
+      console.log(err, data)
       resolve();
     });
   });
@@ -68,15 +90,12 @@ function topojsonize(feature_collection, f) {
  * @param{bool} verbose - Option to display debug
  * @return{Promise} Fulfilled when geojson is returned.
  */
-function read_jsonfile(geojson, verbose) {
+function read_jsonfile(geojson) {
+  console.log(geojson, '!!!')
   return new Promise(function(resolve, reject) {
     jsonfile.readFile(geojson, function(err, feature_collection) {
       if (err) {
         return reject(err);
-      }
-
-      if (verbose) {
-        console.log('file read');
       }
       resolve(feature_collection);
     });
