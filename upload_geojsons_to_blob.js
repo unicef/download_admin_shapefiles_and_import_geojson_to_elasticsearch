@@ -1,8 +1,8 @@
 var ArgumentParser = require('argparse').ArgumentParser;
 var azure_storage = require('azure-storage');
 var config = require('./config');
-var azure_key = config.azure.key1;
-var storage_account = config.azure.storage_account;
+var azure_key = config.geojson.azure.key1;
+var storage_account = config.geojson.azure.storage_account;
 var blobSvc = azure_storage.createBlobService(storage_account, azure_key);
 var bluebird = require('bluebird');
 var fs = require('fs');
