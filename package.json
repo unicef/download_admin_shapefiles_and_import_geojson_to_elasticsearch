@@ -25,6 +25,7 @@
     "topojson": "^1.6.24",
     "turf": "^3.0.14",
     "underscore": "^1.8.3",
+    "@mapbox/geojson-area": "^0.2.2",
     "unzip": "^0.1.11"
   },
   "devDependencies": {
