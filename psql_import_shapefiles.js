@@ -30,7 +30,6 @@ var isos = Object.keys(
     return h;},
   {})
 );
-
 var wanted_files = files.reduce(function(h, file) {
   var iso = file.match(/^[A-Z]{3}/)[0];
   var level = file.match(/\d/)[0];
@@ -59,11 +58,11 @@ var wanted_files = files.reduce(function(h, file) {
 
 function import_admins(country, admin_level) {
   return new Promise((resolve, reject) => {
-    var command = 'bash util/create_db.sh ' + country.toLowerCase() + ' ' + admin_level + ' ' + geojson_src;
-    //var command = 'bash util/destroy_db.sh ' + country.toLowerCase() + ' ' + admin_level + ' ' + geojson_src;
+    var command = 'bash create_db.sh ' + country.toLowerCase() + ' ' + admin_level + ' ' + geojson_src;
+    //var command = 'bash destroy_db.sh ' + country.toLowerCase() + ' ' + admin_level + ' ' + geojson_src;
     console.log(command)
     // resolve();
-    exec(command, (err, stdout, stderr) => {
+    exec(command,{maxBuffer: 2048 * 2500}, (err, stdout, stderr) => {
       if (err) {
         console.error(err);
 
