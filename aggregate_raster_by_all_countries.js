@@ -14,7 +14,7 @@ var parser = new ArgumentParser({
 });
 
 parser.addArgument(
-  ['-f', '--tif'],
+  ['-t', '--tif'],
   {help: 'Name of tif to import'}
 );
 
