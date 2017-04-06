@@ -32,7 +32,7 @@ var wanted_files = shapefile_directories.reduce(
         var first = a.match(/\d/)[0];
         var second = b.match(/\d/)[0];
         return second - first;
-      })[0]
+      })[0];
     }
     return h;},
   {})
@@ -53,7 +53,7 @@ function import_admins(country, file) {
     var country = file.match(/[A-Z]{3}/)[0];
     console.log(country, admin_level, country,  '!!!!')
 
-    var command = 'bash util/create_db.sh ' +
+    var command = 'bash util/create_db_all_countries.sh ' +
     'all_countries' +
     ' ' +
     country.toLowerCase() +
