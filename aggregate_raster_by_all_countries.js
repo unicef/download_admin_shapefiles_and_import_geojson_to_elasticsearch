@@ -1,4 +1,4 @@
-// node aggregate_raster_by_all_countries.js --tif aegypti_simon_hay
+// node aggregate_raster_by_all_countries.js --tif aegypti -s simon_hay
 var async = require('async');
 var bluebird = require('bluebird');
 var pg = require('pg');
@@ -65,7 +65,6 @@ async.waterfall([
     var command = 'psql all_countries -c "DROP TABLE IF EXISTS pop"';
     execute_command(command)
     .then(response => {
-      console.log('adsd')
       console.log(response);
       callback();
     });
@@ -74,7 +73,7 @@ async.waterfall([
   function(callback) {
     console.log('About to add ', tif)
     // Use EPSG:4326 SRS, tile into 100x100 squares, and create an index
-    var command = "raster2pgsql -Y -s 4326 -t 100x100 -I data/mosquitos/" + tif + ".tif pop | psql all_countries";
+    var command = "raster2pgsql -Y -s 4326 -t 100x100 -I data/aegypti/" + tif + ".tif pop | psql all_countries";
     execute_command(command)
     .then(response => {
       console.log(response);
@@ -136,11 +135,15 @@ function scan_raster(country, admin_level, shp_source) {
       // After all data is returned, close connection and return results
       query.on('end', () => {
         console.log(country, results);
+        var pop_sum = parseInt(results.reduce((s, r) => { return s + r.sum }, 0));
+        var kilo_sum = parseInt(results.reduce((s, r) => { return s + r.kilometers}, 0));
         // content = content + results.map(r => {return [file, r.sum || 0, r.dpto, r.wcolgen02_, 'col_0_' + r.dpto + '_' + r.wcolgen02_ + '_santiblanko'].join(" ") }).join("\n")
-        fs.writeFile('./data/mosquitos/processed/' +
+        fs.writeFile('./data/aegypti/processed/' +
         country + '^' + table +
         '^' + tif +
         '^' + tif_source +
+        '^' + pop_sum +
+        '^' + kilo_sum +
         '.json',
         JSON.stringify(results), (err) => {
           if (err) console.log(err)
