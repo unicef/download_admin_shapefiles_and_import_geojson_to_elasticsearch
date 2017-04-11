@@ -3,7 +3,7 @@ var bluebird = require('bluebird');
 var geojsonArea = require('@mapbox/geojson-area');
 var pg = require('pg');
 var fs = require('fs');
-
+var tif_source = 'world_pop';
 var exec = require('child_process').exec;
 
 var command = "psql -l -t | cut -d'|' -f1 ";
@@ -120,8 +120,9 @@ function scan_raster(country, admin_table, connectionString, tif_file) {
         var pop_sum = parseInt(results.reduce((s, r) => { return s + r.sum }, 0)); 
         var kilo_sum = parseInt(results.reduce((s, r) => { return s + r.kilometers}, 0));
         fs.writeFile('./data/rasters/processed/' +
-        country + '^' + admin_table.table_name +
+        country + '^' + admin_table.table_name.replace(/^admin/, country) +
         '^' + tif_file +
+        '^' + tif_source +
         '^' + pop_sum +
         '^' + kilo_sum +
         '.json',
