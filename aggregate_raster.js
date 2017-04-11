@@ -3,7 +3,7 @@ var bluebird = require('bluebird');
 var geojsonArea = require('@mapbox/geojson-area');
 var pg = require('pg');
 var fs = require('fs');
-var tif_source = 'world_pop';
+var tif_source = 'worldpop';
 var exec = require('child_process').exec;
 
 var command = "psql -l -t | cut -d'|' -f1 ";
@@ -22,7 +22,7 @@ function country_db_names() {
   });
 }
 country_db_names().then(countries => {
-  bluebird.each(countries.slice(108), country => {
+  bluebird.each(countries, country => {
     console.log(country, '!!!');
     return process_country(country).then(() => {
       // Drop raster from table if exists
@@ -117,7 +117,7 @@ function scan_raster(country, admin_table, connectionString, tif_file) {
       query.on('end', () => {
         // content = content + results.map(r => {return [file, r.sum || 0, r.dpto, r.wcolgen02_, 'col_0_' + r.dpto + '_' + r.wcolgen02_ + '_santiblanko'].join(" ") }).join("\n")
         // Get population for whole country to store in file name
-        var pop_sum = parseInt(results.reduce((s, r) => { return s + r.sum }, 0)); 
+        var pop_sum = parseInt(results.reduce((s, r) => { return s + r.sum }, 0));
         var kilo_sum = parseInt(results.reduce((s, r) => { return s + r.kilometers}, 0));
         fs.writeFile('./data/rasters/processed/' +
         country + '^' + admin_table.table_name.replace(/^admin/, country) +
@@ -143,7 +143,7 @@ function scan_raster(country, admin_table, connectionString, tif_file) {
 
 function list_connections() {
   return new Promise((resolve, reject) => {
-    
+
   })
 }
 
@@ -160,4 +160,3 @@ function drop_raster_table(country, kind) {
     });
   });
 }
-
